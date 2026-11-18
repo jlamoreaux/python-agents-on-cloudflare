@@ -1,0 +1,19 @@
+{
+	"name": "python-agents-on-cloudflare",
+	"private": true,
+	"type": "module",
+	"engines": { "node": ">=20" },
+	"scripts": {
+		"sync": "rm -rf python-worker/src/agent && cp -R agent python-worker/src/agent",
+		"dev": "npm run sync && wrangler dev -c wrangler.jsonc -c python-worker/wrangler.jsonc",
+		"deploy:worker": "npm run sync && cd python-worker && uv run pywrangler deploy",
+		"deploy:gateway": "wrangler deploy",
+		"deploy": "npm run deploy:worker && npm run deploy:gateway",
+		"types": "wrangler types",
+		"check": "wrangler types && tsc --noEmit"
+	},
+	"devDependencies": {
+		"typescript": "^5.6.0",
+		"wrangler": "^4.165.0"
+	}
+}

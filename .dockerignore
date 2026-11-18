@@ -1,0 +1,4 @@
+# The image only needs agent/ and container/. Keep everything else out of the build context.
+*
+!agent
+!container

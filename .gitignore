@@ -1,0 +1,14 @@
+node_modules
+.wrangler
+.dev.vars*
+.env
+.env.*
+.venv
+python_modules
+__pycache__
+*.pyc
+worker-configuration.d.ts
+.DS_Store
+.venv-workers
+python-worker/src/agent
+python-worker/pylock.toml

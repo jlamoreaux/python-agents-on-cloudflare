@@ -1,0 +1,13 @@
+{
+	"$schema": "../node_modules/wrangler/config-schema.json",
+	"name": "python-agent-worker",
+	"main": "src/entry.py",
+	"compatibility_date": "2026-11-17",
+	"compatibility_flags": ["python_workers"],
+	// Reached only through the gateway's service binding, so it needs no public URL.
+	"workers_dev": false,
+	"preview_urls": false,
+	"ai": { "binding": "AI", "remote": true },
+	"vars": { "MODEL": "@cf/google/gemma-4-26b-a4b-it" },
+	"observability": { "enabled": true }
+}

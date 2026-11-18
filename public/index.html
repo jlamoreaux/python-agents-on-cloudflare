@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="theme-color" content="#ff4801" />
+<title>Python agent: container vs Python Worker</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23ff4801'/%3E%3Cpath d='M12 9l12 7-12 7z' fill='%23fff'/%3E%3C/svg%3E" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="/cf-poc.css" />
+<link rel="stylesheet" href="/app.css" />
+</head>
+<body>
+<header class="bar">
+  <svg class="mark" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" fill="#ff4801"/><path d="M12 9l12 7-12 7z" fill="#fff"/></svg>
+  <div class="crumbs"><b>Containers</b><i>/</i><span>Python agent runtimes</span></div>
+  <div class="spacer"></div>
+  <a class="link" href="https://developers.cloudflare.com/containers/" target="_blank" rel="noopener">Docs &#8599;</a>
+</header>
+
+<main>
+  <section class="hero">
+    <span class="tag">Containers &middot; Python Workers</span>
+    <h1>One Python agent. <em>Two</em> runtimes.</h1>
+    <p class="sub">The same tool-calling loop runs in a <code>container</code> and in a <code>Python Worker</code>. Ask both the same question and compare the answer, the trace and the timing. The container can run code the model writes. The Worker cannot.</p>
+  </section>
+
+  <section class="panel reveal" aria-label="Prompt">
+    <form id="form" class="controls">
+      <div class="delay">
+        <div class="delay-top"><label for="message">Prompt</label><output id="count" for="message">0 / 1000</output></div>
+        <textarea id="message" rows="2" maxlength="1000" placeholder="Ask something that needs a tool"></textarea>
+        <div class="chips" id="chips" role="group" aria-label="Example prompts"></div>
+      </div>
+      <div class="actions">
+        <button class="primary" type="submit" id="both">Run on both</button>
+        <button type="button" id="only-container">Container only</button>
+        <button type="button" id="only-worker">Worker only</button>
+      </div>
+    </form>
+  </section>
+
+  <section class="panel reveal" aria-label="Summary">
+    <div class="panel-head"><h2>Summary</h2><span class="tag plain" id="scope">no runs yet</span></div>
+    <div class="stats">
+      <div class="stat"><div class="k">Container total</div><div class="v" id="s-container">&ndash;</div><div class="note" id="n-container">round trip from the gateway</div></div>
+      <div class="stat"><div class="k">Python Worker total</div><div class="v" id="s-worker">&ndash;</div><div class="note">round trip from the gateway</div></div>
+      <div class="stat hot"><div class="k">Container cold start</div><div class="v" id="s-cold">&ndash;</div><div class="note">0 ms when already running</div></div>
+      <div class="stat"><div class="k">Tools available</div><div class="v" id="s-tools">&ndash;</div><div class="note">container / worker</div></div>
+    </div>
+  </section>
+
+  <section class="cols" aria-live="polite">
+    <article class="panel result" id="r-container">
+      <div class="panel-head"><h2>Container</h2><span class="tag plain" id="t-container">idle</span></div>
+      <div class="panel-body"><p class="empty">Run a prompt to see the container's answer.</p></div>
+    </article>
+    <article class="panel result" id="r-worker">
+      <div class="panel-head"><h2>Python Worker</h2><span class="tag plain" id="t-worker">idle</span></div>
+      <div class="panel-body"><p class="empty">Run a prompt to see the Worker's answer.</p></div>
+    </article>
+  </section>
+
+  <section class="panel reveal" aria-label="How to read this">
+    <div class="panel-head"><h2>How to read this</h2></div>
+    <ol class="how">
+      <li><b>Same loop.</b> Both runtimes import <code>agent/core.py</code>. Only the model call and the tool list differ.</li>
+      <li><b>Cold start.</b> The container boots on the first request and sleeps after two idle minutes. A Python Worker starts much faster than a container boots.</li>
+      <li><b>Trace.</b> Each row is one model call or one tool call, with its own duration. Tool rows show the arguments and the result.</li>
+      <li><b>No keys in the container.</b> It has no Internet. Its model calls go to <code>ai.internal</code>, which the gateway Worker intercepts and forwards to Workers AI.</li>
+    </ol>
+  </section>
+
+  <footer>
+    <span>Built with Cloudflare Containers, Python Workers and Workers AI.</span>
+    <a href="https://developers.cloudflare.com/containers/" target="_blank" rel="noopener">Containers</a>
+    <a href="https://developers.cloudflare.com/workers/languages/python/" target="_blank" rel="noopener">Python Workers</a>
+  </footer>
+</main>
+<script src="/app.js"></script>
+</body>
+</html>
